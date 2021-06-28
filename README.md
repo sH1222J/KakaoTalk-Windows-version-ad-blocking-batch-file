@@ -1,0 +1,1 @@
+# KakaoTalk-Windows-version-ad-blocking-batch-file
