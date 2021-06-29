@@ -1,7 +1,69 @@
+REM --add the following to the top of your bat file--
+@echo off
+
+:: BatchGotAdmin
+:-------------------------------------
+REM  --> Check for permissions
+>nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
+
+REM --> If error flag set, we do not have admin.
+if '%errorlevel%' NEQ '0' (
+    echo Requesting administrative privileges...
+    goto UACPrompt
+) else ( goto gotAdmin )
+
+:UACPrompt
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    set params = %*:"=""
+    echo UAC.ShellExecute "cmd.exe", "/c %~s0 %params%", "", "runas", 1 >> "%temp%\getadmin.vbs"
+
+    "%temp%\getadmin.vbs"
+    del "%temp%\getadmin.vbs"
+    exit /B
+
+:gotAdmin
+    pushd "%CD%"
+    CD /D "%~dp0"
+:--------------------------------------
+
+//¿øÇÏ´Â ¸í·É ½ÇÇà
+
 @echo off
 color 1F
-title HOST Edit Script
-bcdedit > nul || (echo ì˜¤ë¥¸ìª½ ë§ˆìš°ìŠ¤ í´ë¦­ í›„, ê´€ë¦¬ìž ê¶Œí•œìœ¼ë¡œ ë‹¤ì‹œ ì‹¤í–‰í•´ì£¼ì„¸ìš”. & pause & exit)
+cd /d %~dp0
+title Ä«Ä«¿ÀÅå ±¤°í È£½ºÆ® Â÷´Ü by SH.
+mode con cols=100 lines=25
+setlocal enabledelayedexpansion
+
+:gotAdmin
+
+:main
+cls
+echo.
+echo		[ Ä«Ä«¿ÀÅå ±¤°í È£½ºÆ® Â÷´Ü By SH. ]
+echo.
+echo.
+echo.
+echo		1. È°¼ºÈ­ (½ÃÀÛÀü ¹é½ÅÀº ²¨ÁÖ¼¼¿ä.)
+echo.
+echo		2. Á¾·á
+echo.
+echo.
+set menu=
+set /p menu=¿øÇÏ½Ã´Â ÀÛ¾÷ ¹øÈ£¸¦ ÀÔ·Â ÈÄ ¿£ÅÍ(Enter)Å°¸¦ ´­·¯ÁÖ¼¼¿ä : 
+if "%menu%" == "1" goto Go
+if "%menu%" == "2" goto Exit
+
+goto main
+
+:Go
 SET NEWLINE=^& echo.
+
 FIND /C /I "display.ad.daum.net" %WINDIR%\system32\drivers\etc\hosts
-IF %ERRORLEVEL% NEQ 0 ECHO %NEWLINE%^127.0.0.1                   ì°¨ë‹¨í•˜ê³ ìž í•  ì£¼ì†Œ>>%WINDIR%\system32\drivers\etc\hosts
+IF %ERRORLEVEL% NEQ 0 ECHO %NEWLINE%^127.0.0.1                   display.ad.daum.net>>%WINDIR%\system32\drivers\etc\hosts
+pause
+goto main
+
+:EXit
+pause
+
